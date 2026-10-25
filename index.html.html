@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE PERFUMER — Royal Formula Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for exporting PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('perfumer_theme') === 'dark') document.documentElement.classList.add('dark');
+                document.documentElement.lang = localStorage.getItem('perfumer_lang') === 'en' ? 'en' : 'ru';
+            } catch (e) {}
+        })();
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fffbf0',
+                            100: '#fff3c4',
+                            200: '#ffe585',
+                            300: '#ffd043',
+                            400: '#e6b31e',
+                            500: '#c7920a',
+                            600: '#a37105',
+                            700: '#805308',
+                            800: '#68420e',
+                            900: '#573610',
+                        },
+                        ivory: {
+                            50: '#fcfcf9',
+                            100: '#f7f5ed',
+                            200: '#efebd8',
+                            300: '#e2daba',
+                        },
+                        burgundy: '#4a0e17'
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        cormorant: ['Cormorant Garamond', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Royal Silk Background Gradient */
+        body {
+            background: radial-gradient(circle at 50% 0%, #fffbf2 0%, #f7f3e8 40%, #ebdcb9 100%);
+            color: #382813;
+            min-height: 100vh;
+        }
+
+        /* Gold Foil & Text Effects */
+        .text-gold-metallic {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .border-gold-gradient {
+            border-image: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #aa771c) 1;
+        }
+
+        .gold-glow {
+            box-shadow: 0 10px 30px -5px rgba(186, 138, 38, 0.25);
+        }
+
+        .gold-glow-hover:hover {
+            box-shadow: 0 15px 35px 0px rgba(186, 138, 38, 0.35);
+        }
+
+        /* Ornate Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4efe2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7920a;
+            border-radius: 4px;
+        }
+
+        /* Custom Dropdown Animation */
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* ================= DARK THEME (light theme above stays untouched) ================= */
+        html.dark { color-scheme: dark; }
+        html.dark body { background: radial-gradient(circle at 50% 0%, #2a2014 0%, #17120c 45%, #0e0b07 100%); color: #efe3c8; }
+        html.dark ::-webkit-scrollbar-track { background: #1a1510; }
+        html.dark .bg-ivory-50 { background-color: #1f1810; }
+        html.dark .bg-ivory-100 { background-color: #2a2014; }
+        html.dark .bg-white { background-color: #15100a; }
+        html.dark .bg-gold-50 { background-color: #2a2114; }
+        html.dark .bg-gold-100 { background-color: rgba(199,146,10,.20); }
+        html.dark .bg-gold-100\/60 { background-color: rgba(199,146,10,.16); }
+        html.dark .bg-gold-100\/70 { background-color: rgba(199,146,10,.20); }
+        html.dark .bg-gold-200\/60 { background-color: rgba(199,146,10,.30); }
+        html.dark .hover\:bg-gold-200:hover { background-color: rgba(199,146,10,.32); }
+        html.dark .hover\:bg-gold-50\/60:hover { background-color: rgba(199,146,10,.10); }
+        html.dark .text-stone-900, html.dark .text-stone-800 { color: #f3e9d2; }
+        html.dark .text-stone-700, html.dark .text-stone-600 { color: #d8c9a8; }
+        html.dark .text-stone-500 { color: #a99b72; }
+        html.dark .hover\:text-stone-800:hover { color: #fff3d6; }
+        html.dark .text-gold-900, html.dark .text-gold-800 { color: #f0d890; }
+        html.dark .text-gold-700 { color: #e6b31e; }
+        html.dark .text-gold-300 { color: #8a6a1c; }
+        html.dark .border-gold-300 { border-color: #6b5320; }
+        html.dark .border-gold-200 { border-color: #4a3a18; }
+        html.dark .border-t-gold-600 { border-top-color: #c7920a; }
+        html.dark .divide-gold-100 > :not([hidden]) ~ :not([hidden]) { border-color: #3a2d14; }
+        html.dark ::placeholder { color: #7d7050; }
+        html.dark .bg-emerald-100 { background-color: rgba(16,185,129,.18); }
+        html.dark .text-emerald-800 { color: #6ee7b7; }
+        html.dark .border-emerald-300 { border-color: rgba(16,185,129,.45); }
+        html.dark .bg-rose-100 { background-color: rgba(244,63,94,.18); }
+        html.dark .text-rose-800 { color: #fda4af; }
+        html.dark .border-rose-300 { border-color: rgba(244,63,94,.45); }
+        html.dark .bg-indigo-100 { background-color: rgba(99,102,241,.20); }
+        html.dark .text-indigo-800 { color: #a5b4fc; }
+        html.dark .border-indigo-300 { border-color: rgba(99,102,241,.5); }
+        html.dark .bg-amber-100 { background-color: rgba(245,158,11,.18); }
+        html.dark .text-amber-800 { color: #fcd34d; }
+        html.dark .border-amber-300 { border-color: rgba(245,158,11,.45); }
+        html.dark .gold-glow { box-shadow: 0 10px 30px -5px rgba(186, 138, 38, 0.18); }
+        html.dark .g_id_signin { color-scheme: light; }
+
+        /* Print styling for HTML2PDF */
+        .pdf-export-container {
+            font-family: 'Cormorant Garamond', serif !important;
+            color: #1a150e !important;
+            background: #ffffff !important;
+            padding: 25px !important;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-gold-200 selection:text-gold-900 pb-16">
+
+    <!-- Top Disclaimer Banner -->
+    <div class="bg-gradient-to-r from-burgundy via-red-950 to-burgundy text-amber-100 text-xs md:text-sm py-3 px-4 shadow-md text-center border-b-2 border-gold-400">
+        <div class="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <i class="fa-solid fa-crown text-gold-300"></i>
+            <p class="font-cormorant tracking-wide text-sm md:text-base leading-tight" data-i18n="banner">
+                <strong>Обратите внимание:</strong> данный сервис носит ознакомительно-образовательный характер. Он не создает идентичные оригинальные формулы парфюма, а генерирует примерный ольфакторный скелет (ДНК аромата) на основе базы данных парфюмерных ингредиентов.
+            </p>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        
+        <!-- Header & Crest -->
+        <header class="text-center mb-10 relative">
+
+            <!-- Theme & Language Controls -->
+            <div class="absolute top-0 right-0 flex items-center gap-2 z-10">
+                <button id="lang-toggle" onclick="toggleLang()" title="RU / EN" class="px-3 py-2 rounded-xl border border-gold-500 bg-gold-100/60 hover:bg-gold-200 text-gold-900 text-xs font-semibold uppercase tracking-wider transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-globe text-gold-700"></i>
+                    <span><span id="l-ru">RU</span> / <span id="l-en">EN</span></span>
+                </button>
+                <button id="theme-toggle" onclick="toggleTheme()" class="w-9 h-9 rounded-xl border border-gold-500 bg-gold-100/60 hover:bg-gold-200 text-gold-900 transition flex items-center justify-center">
+                    <i id="theme-icon" class="fa-solid fa-moon text-gold-700"></i>
+                </button>
+            </div>
+            <div class="inline-block relative">
+                <!-- Royal Crest Emblem -->
+                <div class="w-24 h-24 mx-auto mb-3 flex items-center justify-center rounded-full bg-gradient-to-b from-gold-100 via-gold-200 to-gold-400 p-1 shadow-xl gold-glow">
+                    <div class="w-full h-full rounded-full bg-ivory-100 border-2 border-gold-600 flex flex-col items-center justify-center p-2 text-gold-700">
+                        <i class="fa-solid fa-crown text-2xl text-gold-600 mb-0.5"></i>
+                        <i class="fa-solid fa-flask-vial text-xl text-gold-800"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <h1 class="font-cinzel text-3xl sm:text-5xl font-black tracking-wider text-gold-metallic uppercase mb-2">
+                THE PERFUMER
+            </h1>
+            <p class="font-cinzel text-xs sm:text-sm tracking-[0.3em] text-gold-800 font-bold uppercase mb-4">
+                EST. 1824 • LONDON • PARIS • GRASSE
+            </p>
+            <div class="h-0.5 w-32 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-2"></div>
+            <p class="font-cormorant italic text-lg sm:text-xl text-stone-700">
+                <span data-i18n="tagline">Искусственный Интеллект Высшего Парфюмерного Искусства</span>
+            </p>
+        </header>
+
+        <!-- Authentication & Key Management Card -->
+        <section class="bg-ivory-50 border-2 border-gold-300 rounded-2xl p-6 mb-8 shadow-lg gold-glow relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-gold-200/30 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                
+                <!-- Status & Mode Indicator -->
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" id="auth-status-dot"></span>
+                        <h2 class="font-cinzel text-lg font-bold text-gold-900 tracking-wide uppercase">
+                            <span data-i18n="auth_title">Авторизация и Доступ к API</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-stone-600 font-sans" id="auth-status-text">
+                        Проверка сохранения API-ключа или Google сессии...
+                    </p>
+                </div>
+
+                <!-- Controls for Auth -->
+                <div class="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    
+                    <!-- Google Sign-In Button Container -->
+                    <div id="g_id_onload"
+                         data-client_id=""
+                         data-callback="handleCredentialResponse"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin" 
+                         data-type="standard" 
+                         data-size="large" 
+                         data-theme="outline" 
+                         data-text="sign_in_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+
+                    <!-- Manual API Key Modal Toggle Button -->
+                    <button onclick="toggleKeyModal()" class="px-4 py-2.5 rounded-xl border border-gold-500 bg-gold-100/60 hover:bg-gold-200 text-gold-900 text-xs font-semibold uppercase tracking-wider transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key text-gold-700"></i>
+                        <span data-i18n="btn_key">API Ключ Gemini</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal for Gemini API Key configuration -->
+            <div id="key-modal" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-ivory-100 border-2 border-gold-400 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+                    <button onclick="toggleKeyModal()" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800 text-lg">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                    <h3 class="font-cinzel text-xl font-bold text-gold-900 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-gold-600"></i> <span data-i18n="modal_title">Настройка API Ключа</span>
+                    </h3>
+
+                    <p class="text-xs text-stone-600 mb-4 leading-relaxed" data-i18n="modal_desc">
+                        Вы можете использовать собственный **Google Gemini API Key**. Ключ сохраняется локально в вашем браузере. Вы также можете передать ключ через параметр в ссылке: <code class="bg-gold-200/60 px-1 py-0.5 rounded text-gold-900">?key=ВАШ_КЛЮЧ</code>
+                    </p>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gold-900 mb-1">
+                            <span data-i18n="lbl_apikey">Ваш Gemini API Key</span>
+                        </label>
+                        <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full px-4 py-2.5 rounded-xl border border-gold-300 bg-white focus:outline-none focus:border-gold-600 text-stone-800 text-sm">
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gold-900 mb-1">
+                            <span data-i18n="lbl_clientid">Google OAuth Client ID (для Варианта 3)</span>
+                        </label>
+                        <input type="text" id="google-client-id-input" placeholder="xxxxx.apps.googleusercontent.com" class="w-full px-4 py-2.5 rounded-xl border border-gold-300 bg-white focus:outline-none focus:border-gold-600 text-stone-800 text-xs">
+                        <span class="text-[10px] text-stone-500 mt-1 block" data-i18n="hint_clientid">Укажите Client ID из Google Cloud Console для использования авторизации Google.</span>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <button onclick="saveApiSettings()" class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-gold-500 to-gold-700 hover:from-gold-600 hover:to-gold-800 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition shadow">
+                            <span data-i18n="btn_save">Сохранить настройки</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Input Form Section -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Panel: Form Controls -->
+            <section class="lg:col-span-5 bg-ivory-50 border-2 border-gold-300 rounded-2xl p-6 shadow-xl gold-glow">
+                <h2 class="font-cinzel text-xl font-bold text-gold-900 mb-6 flex items-center gap-3 border-b border-gold-200 pb-3">
+                    <i class="fa-solid fa-sliders text-gold-600"></i> <span data-i18n="params_title">Параметры Создания</span>
+                </h2>
+
+                <form id="perfume-form" onsubmit="generateFormula(event)" class="space-y-5">
+                    
+                    <!-- Perfume Name / Concept -->
+                    <div>
+                        <label for="perfume-name" class="block text-xs font-bold uppercase tracking-widest text-gold-900 mb-2">
+                            <span data-i18n="lbl_name">Название или Концепция Аромата *</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="perfume-name" required data-i18n-ph="ph_name" placeholder="Например: Baccarat Rouge 540, Королевская Уд-Роза..." 
+                                   class="w-full pl-10 pr-4 py-3 rounded-xl border border-gold-300 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-gold-500 text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles absolute left-3.5 top-3.5 text-gold-500"></i>
+                        </div>
+                    </div>
+
+                    <!-- Batch Weight Input -->
+                    <div>
+                        <label for="batch-weight" class="block text-xs font-bold uppercase tracking-widest text-gold-900 mb-2">
+                            <span data-i18n="lbl_weight">Вес готовой партии (Граммы)</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" id="batch-weight" value="100" min="1" max="10000" step="0.1" 
+                                   class="w-full pl-10 pr-4 py-3 rounded-xl border border-gold-300 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-gold-500 text-sm">
+                            <i class="fa-solid fa-weight-scale absolute left-3.5 top-3.5 text-gold-500"></i>
+                        </div>
+                        <span class="text-[11px] text-stone-500 mt-1 block italic" data-i18n="hint_weight">Стандартный объем формулировки — 100 грамм.</span>
+                    </div>
+
+                    <!-- Olfactory Family / Inspiration Prompt details -->
+                    <div>
+                        <label for="perfume-notes" class="block text-xs font-bold uppercase tracking-widest text-gold-900 mb-2">
+                            <span data-i18n="lbl_notes">Желаемые ноты или Ольфакторная группа (Опционально)</span>
+                        </label>
+                        <textarea id="perfume-notes" rows="3" data-i18n-ph="ph_notes" placeholder="Например: Древесно-восточный, бергамот, шафран, серая амбра, мох..." 
+                                  class="w-full p-3 rounded-xl border border-gold-300 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-gold-500 text-sm leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="generate-btn" class="w-full py-4 bg-gradient-to-r from-gold-600 via-gold-500 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white font-cinzel font-bold text-sm uppercase tracking-widest rounded-xl shadow-lg transition duration-300 transform active:scale-95 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-atom"></i>
+                        <span data-i18n="btn_generate">Сгенерировать Формулу ДНК</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Panel: Result & Formula Output -->
+            <section class="lg:col-span-7 flex flex-col">
+                
+                <!-- Loading State Overlay -->
+                <div id="loading-state" class="hidden bg-ivory-50 border-2 border-gold-300 rounded-2xl p-12 shadow-xl gold-glow text-center my-auto">
+                    <div class="w-20 h-20 border-4 border-gold-200 border-t-gold-600 rounded-full animate-spin mx-auto mb-6"></div>
+                    <h3 class="font-cinzel text-xl font-bold text-gold-900 mb-2" data-i18n="loading_title">Создание Парфюмерного Скелета...</h3>
+                    <p class="font-cormorant text-lg italic text-stone-600" data-i18n="loading_text">Выполняется хроматографический синтез (GC-MS Анализ) нот и рассчет пропорций.</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="bg-ivory-50 border-2 border-dashed border-gold-300 rounded-2xl p-12 text-center my-auto">
+                    <i class="fa-solid fa-mortar-pestle text-5xl text-gold-300 mb-4"></i>
+                    <h3 class="font-cinzel text-lg font-bold text-gold-800 uppercase tracking-wider mb-2" data-i18n="empty_title">Лаборатория Готова</h3>
+                    <p class="font-cormorant text-stone-600 italic" data-i18n="empty_text">Введите концепцию парфюма слева и нажмите кнопку для генерации полного хроматографического состава (GC-MS ДНК).</p>
+                </div>
+
+                <!-- Result Container -->
+                <div id="result-container" class="hidden bg-ivory-50 border-2 border-gold-300 rounded-2xl p-6 sm:p-8 shadow-xl gold-glow animate-fade-in flex-1">
+                    
+                    <!-- Top Actions & Export Buttons Header -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gold-200 pb-4 mb-6 gap-4">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-gold-700 bg-gold-100 px-2.5 py-1 rounded-md border border-gold-300">
+                                GC-MS DNA FORMULA
+                            </span>
+                            <h2 id="res-perfume-name" class="font-cinzel text-2xl sm:text-3xl font-bold text-gold-900 mt-1">
+                                Название Аромата
+                            </h2>
+                        </div>
+
+                        <!-- STRICT REQUIREMENT: EXACTLY TWO EXPORT BUTTONS -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <!-- Button 1: TXT -->
+                            <button onclick="exportToTXT()" class="flex-1 sm:flex-initial px-4 py-2 bg-stone-800 hover:bg-stone-900 text-amber-100 text-xs font-semibold rounded-xl border border-gold-400 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-file-lines text-gold-400"></i>
+                                <span data-i18n="btn_txt">Сохранить в блокнот (.txt)</span>
+                            </button>
+
+                            <!-- Button 2: PDF -->
+                            <button onclick="exportToPDF()" class="flex-1 sm:flex-initial px-4 py-2 bg-burgundy hover:bg-red-950 text-gold-100 text-xs font-semibold rounded-xl border border-gold-400 transition flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-file-pdf text-gold-300"></i>
+                                <span data-i18n="btn_pdf">Сохранить в PDF (.pdf)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Printable Printable PDF Target Zone -->
+                    <div id="pdf-content">
+                        
+                        <!-- Batch Info Banner -->
+                        <div class="bg-gold-50 border border-gold-300 rounded-xl p-3 mb-6 flex flex-wrap justify-between items-center text-xs text-gold-900">
+                            <div><strong data-i18n="batch_weight">Вес партии:</strong> <span id="res-batch-weight">100</span> <span data-i18n="unit_g">г</span></div>
+                            <div><strong data-i18n="batch_count">Всего компонентов:</strong> <span id="res-count">0</span></div>
+                            <div><strong data-i18n="batch_family">Ольфакторная категория:</strong> <span id="res-family" class="font-bold">Восточные</span></div>
+                        </div>
+
+                        <!-- Olfactory Description Section -->
+                        <div class="mb-6 bg-white p-4 rounded-xl border border-gold-200 shadow-sm">
+                            <h3 class="font-cinzel text-sm font-bold text-gold-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-wind text-gold-600"></i> <span data-i18n="profile_title">Ольфакторный профиль и раскрытие</span>
+                            </h3>
+                            <p id="res-description" class="font-cormorant text-base sm:text-lg text-stone-700 italic leading-relaxed">
+                                Описание раскрытия аромата по нотам...
+                            </p>
+                        </div>
+
+                        <!-- Filter Tabs for Pyramid Notes -->
+                        <div class="flex items-center gap-2 mb-4 overflow-x-auto pb-1 text-xs">
+                            <span class="text-stone-500 font-bold uppercase mr-1" data-i18n="filter_label">Фильтр:</span>
+                            <button onclick="filterNotes('all')" id="filter-all" class="note-filter-btn px-3 py-1 rounded-lg bg-gold-600 text-white font-medium shadow-sm" data-i18n="f_all">Все ноты</button>
+                            <button onclick="filterNotes('Top')" id="filter-Top" class="note-filter-btn px-3 py-1 rounded-lg bg-gold-100 text-gold-900 font-medium hover:bg-gold-200" data-i18n="f_top">Верхние</button>
+                            <button onclick="filterNotes('Heart')" id="filter-Heart" class="note-filter-btn px-3 py-1 rounded-lg bg-gold-100 text-gold-900 font-medium hover:bg-gold-200" data-i18n="f_heart">Сердце</button>
+                            <button onclick="filterNotes('Base')" id="filter-Base" class="note-filter-btn px-3 py-1 rounded-lg bg-gold-100 text-gold-900 font-medium hover:bg-gold-200" data-i18n="f_base">База</button>
+                        </div>
+
+                        <!-- Formula Table -->
+                        <div class="overflow-x-auto rounded-xl border border-gold-300 bg-white shadow-sm mb-6">
+                            <table class="w-full text-left text-xs sm:text-sm">
+                                <thead class="bg-gold-100/70 border-b border-gold-300 text-gold-900 font-cinzel font-bold">
+                                    <tr>
+                                        <th class="p-3" data-i18n="th_ing">Ингредиент</th>
+                                        <th class="p-3" data-i18n="th_cas">CAS Номер</th>
+                                        <th class="p-3" data-i18n="th_dil">Растворение</th>
+                                        <th class="p-3" data-i18n="th_note">Нота</th>
+                                        <th class="p-3 text-right">% w/w</th>
+                                        <th class="p-3 text-right">PPT</th>
+                                        <th class="p-3 text-right" data-i18n="th_wt">Вес (г)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="formula-table-body" class="divide-y divide-gold-100 text-stone-800 font-sans">
+                                    <!-- Dynamic rows will be inserted here -->
+                                </tbody>
+                                <tfoot class="bg-gold-50 font-bold border-t border-gold-300 text-gold-900">
+                                    <tr>
+                                        <td colspan="4" class="p-3 text-right font-cinzel" data-i18n="total">Итого:</td>
+                                        <td id="total-percent" class="p-3 text-right">100.00%</td>
+                                        <td id="total-ppt" class="p-3 text-right">1000</td>
+                                        <td id="total-weight" class="p-3 text-right">100.00 г</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div> <!-- End PDF export section -->
+
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 text-center text-xs text-stone-500 font-cormorant border-t border-gold-200 pt-6">
+            <p class="uppercase tracking-widest font-cinzel text-gold-800 mb-1">THE PERFUMER ROYAL COLLECTION</p>
+            <p data-i18n="footer">© 1824–2026 Все права защищены. Лаборатория виртуальной парфюмерии.</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+
+        /* ==========================================================================
+           0. THEME & LANGUAGE (RU / EN)
+           ========================================================================== */
+        const I18N = {
+            ru: {
+                banner: '<strong>Обратите внимание:</strong> данный сервис носит ознакомительно-образовательный характер. Он не создает идентичные оригинальные формулы парфюма, а генерирует примерный ольфакторный скелет (ДНК аромата) на основе базы данных парфюмерных ингредиентов.',
+                tagline: 'Искусственный Интеллект Высшего Парфюмерного Искусства',
+                auth_title: 'Авторизация и Доступ к API',
+                auth_checking: 'Проверка сохранения API-ключа или Google сессии...',
+                auth_url: 'API Ключ подтянут из URL ссылки',
+                auth_saved: 'API Ключ загружен из локальной памяти',
+                auth_missing: 'Внимание: Ключ не найден. Авторизуйтесь или укажите ключ вручную.',
+                auth_updated: 'Настройки доступа успешно обновлены!',
+                auth_google: 'Авторизовано через Google OAuth 2.0!',
+                btn_key: 'API Ключ Gemini',
+                modal_title: 'Настройка API Ключа',
+                modal_desc: 'Вы можете использовать собственный **Google Gemini API Key**. Ключ сохраняется локально в вашем браузере. Вы также можете передать ключ через параметр в ссылке: <code class="bg-gold-200/60 px-1 py-0.5 rounded text-gold-900">?key=ВАШ_КЛЮЧ</code>',
+                lbl_apikey: 'Ваш Gemini API Key',
+                lbl_clientid: 'Google OAuth Client ID (для Варианта 3)',
+                hint_clientid: 'Укажите Client ID из Google Cloud Console для использования авторизации Google.',
+                btn_save: 'Сохранить настройки',
+                params_title: 'Параметры Создания',
+                lbl_name: 'Название или Концепция Аромата *',
+                ph_name: 'Например: Baccarat Rouge 540, Королевская Уд-Роза...',
+                lbl_weight: 'Вес готовой партии (Граммы)',
+                hint_weight: 'Стандартный объем формулировки — 100 грамм.',
+                lbl_notes: 'Желаемые ноты или Ольфакторная группа (Опционально)',
+                ph_notes: 'Например: Древесно-восточный, бергамот, шафран, серая амбра, мох...',
+                btn_generate: 'Сгенерировать Формулу ДНК',
+                loading_title: 'Создание Парфюмерного Скелета...',
+                loading_text: 'Выполняется хроматографический синтез (GC-MS Анализ) нот и рассчет пропорций.',
+                empty_title: 'Лаборатория Готова',
+                empty_text: 'Введите концепцию парфюма слева и нажмите кнопку для генерации полного хроматографического состава (GC-MS ДНК).',
+                btn_txt: 'Сохранить в блокнот (.txt)',
+                btn_pdf: 'Сохранить в PDF (.pdf)',
+                batch_weight: 'Вес партии:',
+                batch_count: 'Всего компонентов:',
+                batch_family: 'Ольфакторная категория:',
+                profile_title: 'Ольфакторный профиль и раскрытие',
+                filter_label: 'Фильтр:',
+                f_all: 'Все ноты', f_top: 'Верхние', f_heart: 'Сердце', f_base: 'База',
+                th_ing: 'Ингредиент', th_cas: 'CAS Номер', th_dil: 'Растворение', th_note: 'Нота', th_wt: 'Вес (г)',
+                total: 'Итого:',
+                unit_g: 'г',
+                footer: '© 1824–2026 Все права защищены. Лаборатория виртуальной парфюмерии.',
+                name_default: 'Королевская Формула',
+                family_default: 'Восточные / Древесные',
+                desc_default: 'Роскошный и многогранный ольфакторный профиль.',
+                notes_default: 'Классическое королевское раскрытие',
+                err_api: 'Ошибка API: ',
+                err_noresp: 'Не удалось получить корректный ответ от модели.',
+                err_alert: 'Произошла ошибка при генерации формулы: ',
+                err_alert_tail: '\nПроверьте верность вашего API ключа Gemini.',
+                txt_name: 'Название парфюма', txt_family: 'Ольфакторная семья', txt_batch: 'Вес готовой партии',
+                txt_desc: 'ОПИСАНИЕ РАСКРЫТИЯ', txt_cols: 'Ингредиент | CAS | Растворение | Нота | % w/w | PPT | Вес (г)',
+                txt_footer: 'Сгенерировано в системе THE PERFUMER ROYAL AI.',
+                ai_lang: 'русском'
+            },
+            en: {
+                banner: '<strong>Please note:</strong> this service is for informational and educational purposes only. It does not create identical copies of original perfume formulas, but generates an approximate olfactory skeleton (the DNA of a fragrance) based on a database of perfumery ingredients.',
+                tagline: 'Artificial Intelligence for the Highest Art of Perfumery',
+                auth_title: 'Authorization & API Access',
+                auth_checking: 'Checking for a saved API key or Google session...',
+                auth_url: 'API key loaded from the URL link',
+                auth_saved: 'API key loaded from local storage',
+                auth_missing: 'Warning: no key found. Sign in or enter a key manually.',
+                auth_updated: 'Access settings updated successfully!',
+                auth_google: 'Authorized via Google OAuth 2.0!',
+                btn_key: 'Gemini API Key',
+                modal_title: 'API Key Setup',
+                modal_desc: 'You can use your own **Google Gemini API Key**. The key is stored locally in your browser. You can also pass the key as a link parameter: <code class="bg-gold-200/60 px-1 py-0.5 rounded text-gold-900">?key=YOUR_KEY</code>',
+                lbl_apikey: 'Your Gemini API Key',
+                lbl_clientid: 'Google OAuth Client ID (for Option 3)',
+                hint_clientid: 'Enter the Client ID from Google Cloud Console to enable Google sign-in.',
+                btn_save: 'Save settings',
+                params_title: 'Creation Parameters',
+                lbl_name: 'Fragrance Name or Concept *',
+                ph_name: 'E.g.: Baccarat Rouge 540, Royal Oud-Rose...',
+                lbl_weight: 'Finished batch weight (grams)',
+                hint_weight: 'Standard formulation volume is 100 grams.',
+                lbl_notes: 'Desired notes or olfactory family (optional)',
+                ph_notes: 'E.g.: Woody-oriental, bergamot, saffron, ambergris, moss...',
+                btn_generate: 'Generate DNA Formula',
+                loading_title: 'Creating the Fragrance Skeleton...',
+                loading_text: 'Performing chromatographic synthesis (GC-MS analysis) of notes and calculating proportions.',
+                empty_title: 'Laboratory Ready',
+                empty_text: 'Enter a fragrance concept on the left and press the button to generate the full chromatographic composition (GC-MS DNA).',
+                btn_txt: 'Save to Notepad (.txt)',
+                btn_pdf: 'Save to PDF (.pdf)',
+                batch_weight: 'Batch weight:',
+                batch_count: 'Total components:',
+                batch_family: 'Olfactory category:',
+                profile_title: 'Olfactory profile and development',
+                filter_label: 'Filter:',
+                f_all: 'All notes', f_top: 'Top', f_heart: 'Heart', f_base: 'Base',
+                th_ing: 'Ingredient', th_cas: 'CAS Number', th_dil: 'Dilution', th_note: 'Note', th_wt: 'Weight (g)',
+                total: 'Total:',
+                unit_g: 'g',
+                footer: '© 1824–2026 All rights reserved. Virtual Perfumery Laboratory.',
+                name_default: 'Royal Formula',
+                family_default: 'Oriental / Woody',
+                desc_default: 'A luxurious and multifaceted olfactory profile.',
+                notes_default: 'Classic royal development',
+                err_api: 'API error: ',
+                err_noresp: 'Could not get a valid response from the model.',
+                err_alert: 'An error occurred while generating the formula: ',
+                err_alert_tail: '\nPlease check that your Gemini API key is correct.',
+                txt_name: 'Perfume name', txt_family: 'Olfactory family', txt_batch: 'Finished batch weight',
+                txt_desc: 'DEVELOPMENT DESCRIPTION', txt_cols: 'Ingredient | CAS | Dilution | Note | % w/w | PPT | Weight (g)',
+                txt_footer: 'Generated by THE PERFUMER ROYAL AI.',
+                ai_lang: 'English'
+            }
+        };
+
+        let currentLang = 'ru';
+        let currentTheme = 'light';
+        let authState = { ok: false, key: 'auth_checking', custom: null };
+
+        try {
+            currentLang = localStorage.getItem('perfumer_lang') === 'en' ? 'en' : 'ru';
+            currentTheme = localStorage.getItem('perfumer_theme') === 'dark' ? 'dark' : 'light';
+        } catch (e) {}
+
+        function t(key) {
+            return (I18N[currentLang] && I18N[currentLang][key]) || I18N.ru[key] || key;
+        }
+
+        function applyLang() {
+            document.documentElement.lang = currentLang;
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+
+            const ru = document.getElementById('l-ru');
+            const en = document.getElementById('l-en');
+            if (ru && en) {
+                ru.className = currentLang === 'ru' ? 'font-black underline underline-offset-4' : 'opacity-50';
+                en.className = currentLang === 'en' ? 'font-black underline underline-offset-4' : 'opacity-50';
+            }
+
+            renderAuthStatus();
+            if (currentFormulaData) {
+                renderFormulaUI(currentFormulaData, currentFormulaData.batchWeight);
+            }
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            try { localStorage.setItem('perfumer_lang', currentLang); } catch (e) {}
+            applyLang();
+        }
+
+        function applyTheme() {
+            document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = currentTheme === 'dark' ? 'fa-solid fa-sun text-gold-700' : 'fa-solid fa-moon text-gold-700';
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('perfumer_theme', currentTheme); } catch (e) {}
+            applyTheme();
+        }
+
+        // Global State Variables
+        let currentFormulaData = null;
+        let activeFilter = 'all';
+        let userApiKey = '';
+        let googleOAuthToken = null;
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            applyTheme();
+            applyLang();
+        });
+
+        /* ==========================================================================
+           1. AUTHENTICATION & API KEY MANAGEMENT (VARIANT 3)
+           ========================================================================== */
+        
+        function initAuth() {
+            // Check 1: URL Parameter `?key=...`
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyFromUrl = urlParams.get('key');
+            
+            if (keyFromUrl) {
+                userApiKey = keyFromUrl;
+                localStorage.setItem('gemini_perfume_key', keyFromUrl);
+                updateAuthStatus(true, 'auth_url');
+                return;
+            }
+
+            // Check 2: LocalStorage saved key
+            const savedKey = localStorage.getItem('gemini_perfume_key');
+            if (savedKey) {
+                userApiKey = savedKey;
+                updateAuthStatus(true, 'auth_saved');
+            } else {
+                updateAuthStatus(false, 'auth_missing');
+            }
+
+            // Check 3: Load Saved Google Client ID if available
+            const savedClientId = localStorage.getItem('google_client_id');
+            if (savedClientId) {
+                document.getElementById('google-client-id-input').value = savedClientId;
+                const gIdOnload = document.getElementById('g_id_onload');
+                if (gIdOnload) {
+                    gIdOnload.setAttribute('data-client_id', savedClientId);
+                }
+            }
+        }
+
+        function updateAuthStatus(isSuccess, messageKey) {
+            authState = { ok: isSuccess, key: messageKey };
+            renderAuthStatus();
+        }
+
+        function renderAuthStatus() {
+            const dot = document.getElementById('auth-status-dot');
+            const text = document.getElementById('auth-status-text');
+            const isSuccess = authState.ok;
+
+            text.innerText = t(authState.key);
+            if (isSuccess) {
+                dot.className = "w-3 h-3 rounded-full bg-emerald-500 animate-pulse";
+            } else {
+                dot.className = "w-3 h-3 rounded-full bg-amber-500";
+            }
+        }
+
+        function toggleKeyModal() {
+            const modal = document.getElementById('key-modal');
+            const keyInput = document.getElementById('api-key-input');
+            keyInput.value = userApiKey;
+            modal.classList.toggle('hidden');
+        }
+
+        function saveApiSettings() {
+            const keyInput = document.getElementById('api-key-input').value.trim();
+            const clientIdInput = document.getElementById('google-client-id-input').value.trim();
+
+            if (keyInput) {
+                userApiKey = keyInput;
+                localStorage.setItem('gemini_perfume_key', keyInput);
+            }
+
+            if (clientIdInput) {
+                localStorage.setItem('google_client_id', clientIdInput);
+                const gIdOnload = document.getElementById('g_id_onload');
+                if (gIdOnload) {
+                    gIdOnload.setAttribute('data-client_id', clientIdInput);
+                }
+            }
+
+            toggleKeyModal();
+            updateAuthStatus(true, 'auth_updated');
+        }
+
+        // Callback function for Google Identity Services SDK
+        function handleCredentialResponse(response) {
+            if (response.credential) {
+                googleOAuthToken = response.credential;
+                updateAuthStatus(true, 'auth_google');
+            }
+        }
+
+
+        /* ==========================================================================
+           2. FORMULATION & GEMINI API INTEGRATION
+           ========================================================================== */
+
+        async function generateFormula(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('perfume-name').value.trim();
+            const weight = parseFloat(document.getElementById('batch-weight').value) || 100;
+            const notes = document.getElementById('perfume-notes').value.trim();
+
+            if (!name) return;
+
+            // UI State change
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('result-container').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+
+            const systemPrompt = `Вы — главный парфюмер-химик высокого дома парфюмерии (Grasse, France). Ваша задача — сгенерировать точную хроматографическую (GC-MS) формулу парфюмерного скелета по названию и концепции. Вы должны вернуть ИСКЛЮЧИТЕЛЬНО валидный JSON объект со следующей структурой:
+            {
+              "perfumeName": "Название",
+              "family": "Ольфакторное семейство",
+              "description": "Подробное описание раскрытия (Верх, Сердце, База)",
+              "ingredients": [
+                {
+                  "name": "Имя компонента (например: ISO E Super, Isobutyl Quinoline, Hedione)",
+                  "cas": "CAS номер (например: 54464-57-2)",
+                  "dilution": "Концентрация (например: 100% или 10% DPG)",
+                  "type": "Top" или "Heart" или "Base",
+                  "percentage": Число от 0.1 до 40.0 (сумма всех компонентов должна быть БЛИЗКА К 100)
+                }
+              ]
+            }
+            Включите от 10 до 16 ключевых ингредиентов для создания профессионального каркаса.
+            Текстовые значения полей "family" и "description" пишите на языке: ${t('ai_lang')}. Значения поля "type" оставляйте строго на английском: Top, Heart или Base.`;
+
+            const userPrompt = `Создай формулу парфюма: "${name}". Дополнительные пожелания/ноты: ${notes || t('notes_default')}.`;
+
+            try {
+                // Determine API Key to use (Custom key -> URL -> Default empty fallback runtime)
+                const apiKey = userApiKey || "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`${t('err_api')}${response.statusText}`);
+                }
+
+                const result = await response.json();
+                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (!jsonText) throw new Error(t('err_noresp'));
+
+                const parsedData = JSON.parse(jsonText);
+                currentFormulaData = parsedData;
+                currentFormulaData.batchWeight = weight;
+
+                renderFormulaUI(parsedData, weight);
+
+            } catch (err) {
+                console.error(err);
+                alert(`${t('err_alert')}${err.message}${t('err_alert_tail')}`);
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('empty-state').classList.remove('hidden');
+            }
+        }
+
+        /* ==========================================================================
+           3. UI RENDERING & DYNAMIC WEIGHT CALCULATIONS
+           ========================================================================== */
+
+        function renderFormulaUI(data, batchWeight) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('result-container').classList.remove('hidden');
+
+            document.getElementById('res-perfume-name').innerText = data.perfumeName || t('name_default');
+            document.getElementById('res-family').innerText = data.family || t('family_default');
+            document.getElementById('res-description').innerText = data.description || t('desc_default');
+            document.getElementById('res-batch-weight').innerText = batchWeight;
+            document.getElementById('res-count').innerText = data.ingredients.length;
+
+            renderTableRows(data.ingredients, batchWeight, activeFilter);
+        }
+
+        function renderTableRows(ingredients, batchWeight, filter) {
+            const tbody = document.getElementById('formula-table-body');
+            tbody.innerHTML = '';
+
+            let sumPercentage = 0;
+            let sumPPT = 0;
+            let sumWeight = 0;
+
+            ingredients.forEach((ing) => {
+                if (filter !== 'all' && ing.type !== filter) return;
+
+                const percent = parseFloat(ing.percentage) || 0;
+                const ppt = Math.round(percent * 10);
+                const weightGrams = ((percent / 100) * batchWeight).toFixed(3);
+
+                sumPercentage += percent;
+                sumPPT += ppt;
+                sumWeight += parseFloat(weightGrams);
+
+                let badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
+                if (ing.type === 'Top') badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+                if (ing.type === 'Heart') badgeColor = "bg-rose-100 text-rose-800 border-rose-300";
+                if (ing.type === 'Base') badgeColor = "bg-indigo-100 text-indigo-800 border-indigo-300";
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gold-50/60 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-stone-900">${ing.name}</td>
+                    <td class="p-3 text-stone-500 text-xs font-mono">${ing.cas || 'N/A'}</td>
+                    <td class="p-3 text-stone-600 text-xs">${ing.dilution || '100%'}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">${ing.type}</span>
+                    </td>
+                    <td class="p-3 text-right font-mono">${percent.toFixed(2)}%</td>
+                    <td class="p-3 text-right font-mono">${ppt}</td>
+                    <td class="p-3 text-right font-mono font-semibold text-gold-900">${weightGrams} ${t('unit_g')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('total-percent').innerText = `${sumPercentage.toFixed(2)}%`;
+            document.getElementById('total-ppt').innerText = sumPPT;
+            document.getElementById('total-weight').innerText = `${sumWeight.toFixed(2)} ${t('unit_g')}`;
+        }
+
+        function filterNotes(type) {
+            activeFilter = type;
+            document.querySelectorAll('.note-filter-btn').forEach(btn => {
+                btn.className = "note-filter-btn px-3 py-1 rounded-lg bg-gold-100 text-gold-900 font-medium hover:bg-gold-200 transition";
+            });
+            document.getElementById(`filter-${type}`).className = "note-filter-btn px-3 py-1 rounded-lg bg-gold-600 text-white font-medium shadow-sm transition";
+
+            if (currentFormulaData) {
+                renderTableRows(currentFormulaData.ingredients, currentFormulaData.batchWeight, activeFilter);
+            }
+        }
+
+        /* ==========================================================================
+           4. EXPORT OPTIONS (STRICT REQUIREMENT: EXACTLY TWO EXPORT BUTTONS)
+           ========================================================================== */
+
+        // Button 1: Export to TXT
+        function exportToTXT() {
+            if (!currentFormulaData) return;
+
+            const name = currentFormulaData.perfumeName || "Formula";
+            const bw = currentFormulaData.batchWeight || 100;
+            
+            let txtContent = `====================================================\n`;
+            txtContent += ` THE PERFUMER EST. 1824 - ROYAL GC-MS FORMULA\n`;
+            txtContent += `====================================================\n\n`;
+            txtContent += `${t('txt_name')}: ${name}\n`;
+            txtContent += `${t('txt_family')}: ${currentFormulaData.family}\n`;
+            txtContent += `${t('txt_batch')}: ${bw} ${t('unit_g')}\n\n`;
+            txtContent += `${t('txt_desc')}:\n${currentFormulaData.description}\n\n`;
+            txtContent += `----------------------------------------------------\n`;
+            txtContent += `${t('txt_cols')}\n`;
+            txtContent += `----------------------------------------------------\n`;
+
+            currentFormulaData.ingredients.forEach(i => {
+                const percent = (parseFloat(i.percentage) || 0).toFixed(2);
+                const ppt = Math.round(percent * 10);
+                const weightGrams = ((percent / 100) * bw).toFixed(3);
+                txtContent += `${i.name} | ${i.cas} | ${i.dilution} | ${i.type} | ${percent}% | ${ppt} | ${weightGrams}g\n`;
+            });
+
+            txtContent += `----------------------------------------------------\n`;
+            txtContent += `${t('txt_footer')}\n`;
+
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${name.replace(/\s+/g, '_')}_Formula.txt`;
+            link.click();
+        }
+
+        // Button 2: Export to PDF
+        function exportToPDF() {
+            if (!currentFormulaData) return;
+
+            const element = document.getElementById('pdf-content');
+            const perfumeName = currentFormulaData.perfumeName || "Perfume";
+
+            const opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     `${perfumeName.replace(/\s+/g, '_')}_Royal_Formula.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // The PDF is always rendered in the light (original) look, whatever theme is active
+            const wasDark = document.documentElement.classList.contains('dark');
+            document.documentElement.classList.remove('dark');
+            html2pdf().set(opt).from(element).save().finally(() => {
+                if (wasDark) document.documentElement.classList.add('dark');
+            });
+        }
+    </script>
+</body>
+</html>
