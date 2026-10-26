@@ -15,8 +15,7 @@
     <!-- html2pdf.js for exporting PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Google Identity Services SDK -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
+    
     <script>
         (function () {
             try {
@@ -231,21 +230,6 @@
                 <!-- Controls for Auth -->
                 <div class="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     
-                    <!-- Google Sign-In Button Container -->
-                    <div id="g_id_onload"
-                         data-client_id=""
-                         data-callback="handleCredentialResponse"
-                         data-auto_prompt="false">
-                    </div>
-                    <div class="g_id_signin" 
-                         data-type="standard" 
-                         data-size="large" 
-                         data-theme="outline" 
-                         data-text="sign_in_with"
-                         data-shape="rectangular"
-                         data-logo_alignment="left">
-                    </div>
-
                     <!-- Manual API Key Modal Toggle Button -->
                     <button onclick="toggleKeyModal()" class="px-4 py-2.5 rounded-xl border border-gold-500 bg-gold-100/60 hover:bg-gold-200 text-gold-900 text-xs font-semibold uppercase tracking-wider transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-key text-gold-700"></i>
@@ -722,14 +706,6 @@
 
             toggleKeyModal();
             updateAuthStatus(true, 'auth_updated');
-        }
-
-        // Callback function for Google Identity Services SDK
-        function handleCredentialResponse(response) {
-            if (response.credential) {
-                googleOAuthToken = response.credential;
-                updateAuthStatus(true, 'auth_google');
-            }
         }
 
 
